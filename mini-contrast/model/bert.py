@@ -19,41 +19,41 @@ from transformers import BertModel, BertConfig
 #         return logits
 
 
-class TextEncoder(nn.Module):
-    def __init__(self, pretrained=True):
-        super(TextEncoder, self).__init__()
-        if pretrained:  # if use pretrained scibert model
-            self.main_model = BertModel.from_pretrained('bert_pretrained/')
-        else:
-            config = BertConfig(vocab_size=31090, )
-            self.main_model = BertModel(config)
-
-        self.dropout = nn.Dropout(0.1)
-        # self.hidden_size = self.main_model.config.hidden_size
-
-    def forward(self, input_ids, attention_mask):
-        device = input_ids.device
-        typ = torch.zeros(input_ids.shape).long().to(device)
-        output = self.main_model(input_ids, token_type_ids=typ, attention_mask=attention_mask)['pooler_output']  # b,d
-        print(output.shape) 
-        logits = self.dropout(output)
-        return logits 
-
-# from transformers import AutoTokenizer, AutoModelForMaskedLM
-
-
 # class TextEncoder(nn.Module):
 #     def __init__(self, pretrained=True):
 #         super(TextEncoder, self).__init__()
+#         if pretrained:  # if use pretrained scibert model
+#             self.main_model = BertModel.from_pretrained('bert_pretrained/')
+#         else:
+#             config = BertConfig(vocab_size=31090, )
+#             self.main_model = BertModel(config)
+
 #         self.dropout = nn.Dropout(0.1)
-#         self.main_model = AutoModelForMaskedLM.from_pretrained("nlpie/distil-biobert")
+#         # self.hidden_size = self.main_model.config.hidden_size
 
 #     def forward(self, input_ids, attention_mask):
 #         device = input_ids.device
 #         typ = torch.zeros(input_ids.shape).long().to(device)
-#         output = self.main_model(input_ids, token_type_ids=typ, attention_mask=attention_mask).hidden_states[:,0]  # b,d
-#         logits = output
-#         return logits
+#         output = self.main_model(input_ids, token_type_ids=typ, attention_mask=attention_mask)['pooler_output']  # b,d
+#         logits = self.dropout(output)
+#         return logits 
+
+from transformers import AutoTokenizer, AutoModelForMaskedLM
+
+
+class TextEncoder(nn.Module):
+    def __init__(self, pretrained=True):
+        super(TextEncoder, self).__init__()
+        self.dropout = nn.Dropout(0.1)
+        self.main_model = AutoModelForMaskedLM.from_pretrained("nlpie/distil-biobert")
+
+    def forward(self, input_ids, attention_mask):
+        device = input_ids.device
+        typ = torch.zeros(input_ids.shape).long().to(device)
+        output = self.main_model(input_ids, token_type_ids=typ, attention_mask=attention_mask).logits  # b,d 
+        print(output.shape)
+        logits = output
+        return logits
 
 
 if __name__ == '__main__':

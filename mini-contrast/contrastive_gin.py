@@ -62,22 +62,22 @@ class GINSimclr(pl.LightningModule):
         else:
             self.text_encoder = TextEncoder(pretrained=True)
             
-        if self.bert_pretrain:
-            print("BERT: load SciBERT")
-            ckpt = torch.load('bert_pretrained/pytorch_model.bin')  #('kvplm_pretrained/ckpt_KV_1.pt')
-            if 'module.ptmodel.bert.embeddings.word_embeddings.weight' in ckpt:
-                pretrained_dict = {"main_model."+k[20:]: v for k, v in ckpt.items()}
-            elif 'bert.embeddings.word_embeddings.weight' in ckpt:
-                pretrained_dict = {"main_model."+k[5:]: v for k, v in ckpt.items()}
-            else:
-                pretrained_dict = {"main_model."+k[12:]: v for k, v in ckpt.items()}
-            # print(pretrained_dict.keys())
-            # print(self.text_encoder.state_dict().keys())
-            self.text_encoder.load_state_dict(pretrained_dict, strict=False)
-            # missing_keys, unexpected_keys = self.text_encoder.load_state_dict(pretrained_dict, strict=False)
-            # print(missing_keys)
-            # print(unexpected_keys)
-        # self.feature_extractor.freeze()
+        # if self.bert_pretrain:
+        #     print("BERT: load SciBERT")
+        #     ckpt = torch.load('bert_pretrained/pytorch_model.bin')  #('kvplm_pretrained/ckpt_KV_1.pt')
+        #     if 'module.ptmodel.bert.embeddings.word_embeddings.weight' in ckpt:
+        #         pretrained_dict = {"main_model."+k[20:]: v for k, v in ckpt.items()}
+        #     elif 'bert.embeddings.word_embeddings.weight' in ckpt:
+        #         pretrained_dict = {"main_model."+k[5:]: v for k, v in ckpt.items()}
+        #     else:
+        #         pretrained_dict = {"main_model."+k[12:]: v for k, v in ckpt.items()}
+        #     # print(pretrained_dict.keys())
+        #     # print(self.text_encoder.state_dict().keys())
+        #     self.text_encoder.load_state_dict(pretrained_dict, strict=False)
+        #     # missing_keys, unexpected_keys = self.text_encoder.load_state_dict(pretrained_dict, strict=False)
+        #     # print(missing_keys)
+        #     # print(unexpected_keys)
+        # # self.feature_extractor.freeze()
 
         self.graph_proj_head = nn.Sequential(
           nn.Linear(self.gin_hidden_dim, self.gin_hidden_dim),
