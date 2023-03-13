@@ -6,7 +6,9 @@ from copy import deepcopy
 import numpy as np
 import os
 import random
-from transformers import BertTokenizer
+# from transformers import BertTokenizer
+from transformers import AutoTokenizer, AutoModelForMaskedLM
+
 
 
 class GINPretrainDataset(Dataset):
@@ -140,7 +142,8 @@ class GINPretrainDataset(Dataset):
         return data_aug
 
     def tokenizer_text(self, text):
-        tokenizer = BertTokenizer.from_pretrained('bert_pretrained/')
+        # tokenizer = BertTokenizer.from_pretrained('bert_pretrained/')
+        tokenizer = AutoTokenizer.from_pretrained("nlpie/distil-biobert")
         sentence_token = tokenizer(text=text,
                                    truncation=True,
                                    padding='max_length',
