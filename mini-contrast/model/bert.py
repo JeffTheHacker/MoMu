@@ -50,7 +50,7 @@ class TextEncoder(nn.Module):
     def forward(self, input_ids, attention_mask):
         device = input_ids.device
         typ = torch.zeros(input_ids.shape).long().to(device)
-        output = self.main_model(input_ids, token_type_ids=typ, attention_mask=attention_mask, output_hidden_states=True).hidden_states[:,0]  # b,d 
+        output = self.main_model(input_ids, token_type_ids=typ, attention_mask=attention_mask, output_hidden_states=True).hidden_states[-1][:,0]  # b,d 
         logits = output
         return logits
 
