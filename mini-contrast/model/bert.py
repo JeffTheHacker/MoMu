@@ -38,21 +38,26 @@ from transformers import BertModel, BertConfig
 #         logits = self.dropout(output)
 #         return logits 
 
-from transformers import AutoTokenizer, AutoModelForMaskedLM
+from transformers import DistilBertModel, DistilBertTokenizer
 
 
 class TextEncoder(nn.Module):
-    def __init__(self, pretrained=True):
-        super(TextEncoder, self).__init__()
-        self.dropout = nn.Dropout(0.1)
-        self.main_model = AutoModelForMaskedLM.from_pretrained("nlpie/distil-biobert")
+    def init(self):
+        super(TextEncoder, self).init()
+        self.l1 = DistilBertModel.from_pretrained("nlpie/distil-biobert")
+        self.pre_classifier = torch.nn.Linear(768, 768)
+        self.dropout = torch.nn.Dropout(0.3)
+        self.classifier = torch.nn.Linear(768, 4)
 
     def forward(self, input_ids, attention_mask):
-        device = input_ids.device
-        typ = torch.zeros(input_ids.shape).long().to(device)
-        output = self.main_model(input_ids, token_type_ids=typ, attention_mask=attention_mask, output_hidden_states=True).hidden_states[-1][:,0]  # b,d 
-        logits = output
-        return logits
+        output_1 = self.l1(input_ids=input_ids, attention_mask=attention_mask)
+        hidden_state = output_1[0]
+        pooler = hidden_state[:, 0]
+        pooler = self.pre_classifier(pooler)
+        pooler = torch.nn.ReLU()(pooler)
+        pooler = self.dropout(pooler)
+        output = self.classifier(pooler)
+        return output
 
 
 if __name__ == '__main__':
