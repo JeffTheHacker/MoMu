@@ -47,7 +47,7 @@ class TextEncoder(nn.Module):
         self.l1 = DistilBertModel.from_pretrained("nlpie/distil-biobert")
         self.pre_classifier = torch.nn.Linear(768, 768)
         self.dropout = torch.nn.Dropout(0.3)
-        self.classifier = torch.nn.Linear(768, 4)
+        self.classifier = torch.nn.Linear(768, 768)
 
     def forward(self, input_ids, attention_mask):
         output_1 = self.l1(input_ids=input_ids, attention_mask=attention_mask)
