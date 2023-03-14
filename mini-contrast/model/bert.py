@@ -43,7 +43,7 @@ from transformers import DistilBertModel, DistilBertTokenizer
 
 class TextEncoder(nn.Module):
     def __init__(self, pretrained=True):
-        super(TextEncoder, self).init()
+        super(TextEncoder, self).__init__()
         self.l1 = DistilBertModel.from_pretrained("nlpie/distil-biobert")
         self.pre_classifier = torch.nn.Linear(768, 768)
         self.dropout = torch.nn.Dropout(0.3)
